@@ -22,13 +22,18 @@ const fields = [
     fields: [
       {
         key: "time",
-        type: "number", "variable", "property"
+        type: ["number", "variable", "property"],
+        defaultType: "number",
         label: l10n("FIELD_DURATION"),
         description: l10n("FIELD_DURATION_WAIT_DESC"),
         min: 0,
         max: 60,
         step: 0.1,
-        defaultValue: 0.5,
+        defaultValue: {
+          number: 0.5,
+          variable: "LAST_VARIABLE",
+          property: "$self$:xpos",
+        },
         unitsField: "units",
         unitsDefault: "time",
         unitsAllowed: ["time", "frames"],
@@ -43,11 +48,15 @@ const fields = [
         key: "frames",
         label: l10n("FIELD_DURATION"),
         description: l10n("FIELD_DURATION_WAIT_DESC"),
-        type: "number",
+        type: ["number", "variable", "property"],
         min: 0,
         max: 3600,
         width: "50%",
-        defaultValue: 30,
+        defaultValue: {
+          number: 30,
+          variable: "LAST_VARIABLE",
+          property: "$self$:xpos",
+        },
         unitsField: "units",
         unitsDefault: "time",
         unitsAllowed: ["time", "frames"],
@@ -65,14 +74,27 @@ const fields = [
 const compile = (input, helpers) => {
   const { wait } = helpers;
   let frames = 0;
-  if (input.units === "frames") {
-    frames = typeof input.frames === "number" ? input.frames : 30;
-  } else {
-    const seconds = typeof input.time === "number" ? input.time : 0.5;
-    frames = Math.ceil(seconds * 60);
-  }
-  if (frames > 0) {
-    wait(frames);
+  if (input.time.type === "number") {
+    if (input.units === "frames") {
+      frames = typeof input.frames === "number" ? input.frames : 30;
+    } else {
+      const seconds = typeof input.time === "number" ? input.time : 0.5;
+      frames = Math.ceil(seconds * 60);
+    }
+    if (frames > 0) {
+      wait(frames);
+    }
+  }else {
+    const iVar = variableFromUnion(input, temporaryEntityVariable);
+    if (input.units === "frames") {
+      frames = typeof input.frames === "number" ? input.frames : 30;
+    } else {
+      const seconds = typeof input.time === "number" ? input.time : 0.5;
+      frames = Math.ceil(seconds * 60);
+    }
+    if (frames > 0) {
+      wait(frames);
+    }
   }
 };
 
