@@ -22,7 +22,7 @@ const fields = [
     fields: [
       {
         key: "time",
-        type: "number",
+        type: "number", "variable", "property"
         label: l10n("FIELD_DURATION"),
         description: l10n("FIELD_DURATION_WAIT_DESC"),
         min: 0,
