@@ -87,9 +87,9 @@ const compile = (input, helpers) => {
   }else {
     const iVar = variableFromUnion(input, temporaryEntityVariable);
     if (input.units === "frames") {
-      frames = typeof input.frames === "number" ? input.frames : 30;
+      frames = typeof iVar.frames === "number" ? iVar.frames : 30;
     } else {
-      const seconds = typeof input.time === "number" ? input.time : 0.5;
+      const seconds = typeof iVar.time === "number" ? iVar.time : 0.5;
       frames = Math.ceil(seconds * 60);
     }
     if (frames > 0) {
