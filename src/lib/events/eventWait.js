@@ -72,7 +72,11 @@ const fields = [
 ];
 
 const compile = (input, helpers) => {
-  const { wait } = helpers;
+  const { 
+    wait,
+    temporaryEntityVariable,
+    variableFromUnion,
+  } = helpers;
   let frames = 0;
   if (input.time.type === "number") {
     if (input.units === "frames") {
