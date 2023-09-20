@@ -22,19 +22,19 @@ const fields = [
     fields: [
       {
         key: "time",
-        type: "union",
+        type:"union",
         types: ["number", "variable", "property"],
+        defaultType: "number",
         label: l10n("FIELD_DURATION"),
         description: l10n("FIELD_DURATION_WAIT_DESC"),
         min: 0,
         max: 60,
         step: 0.1,
         defaultValue: {
-          number: 0.5,
+          number: 3,
           variable: "LAST_VARIABLE",
           property: "$self$:xpos",
         },
-        defaultType: "number",
         unitsField: "units",
         unitsDefault: "time",
         unitsAllowed: ["time", "frames"],
@@ -47,20 +47,19 @@ const fields = [
       },
       {
         key: "frames",
+        type:"union",
         label: l10n("FIELD_DURATION"),
         description: l10n("FIELD_DURATION_WAIT_DESC"),
-        type: "union",
         types: ["number", "variable", "property"],
-        defaultValue: {
-          number: 0.5,
-          variable: "LAST_VARIABLE",
-          property: "$self$:xpos",
-        },
         defaultType: "number",
         min: 0,
         max: 3600,
         width: "50%",
-        defaultValue: 30,
+        defaultValue: {
+          number: 90,
+          variable: "LAST_VARIABLE",
+          property: "$self$:xpos",
+        },
         unitsField: "units",
         unitsDefault: "time",
         unitsAllowed: ["time", "frames"],
@@ -75,52 +74,37 @@ const fields = [
   },
 ];
 
-// const compile = (input, helpers) => {
-//   const { 
-//     wait,
-//     temporaryEntityVariable,
-//     variableFromUnion,
-//   } = helpers;
-//   let frames = 0;
-//   if (input.time.type === "number") {
-//     if (input.units === "frames") {
-//       frames = typeof input.frames === "number" ? input.frames : 30;
-//     } else {
-//       const seconds = typeof input.time === "number" ? input.time : 0.5;
-//       frames = Math.ceil(seconds * 60);
-//     }
-//     if (frames > 0) {
-//       wait(frames);
-//     }
-//   }else {
-//     const iVar = variableFromUnion(input, temporaryEntityVariable);
-//     if (input.units === "frames") {
-//       frames = typeof iVar.frames === "number" ? iVar.frames : 30;
-//     } else {
-//       const seconds = typeof iVar.time === "number" ? iVar.time : 0.5;
-//       frames = Math.ceil(seconds * 60);
-//     }
-//     if (frames > 0) {
-//       wait(frames);
-//     }
-//   }
-// };
-
 const compile = (input, helpers) => {
   const { 
     wait,
     variableFromUnion,
+    temporaryEntityVariable,
   } = helpers;
   let frames = 0;
-  if (input.units === "number") {
-    frames = typeof input.frames === "number" ? input.frames : 30;
-  } else {
-    const seconds = typeof input.time === "number" ? input.time : 0.5;
-    frames = Math.ceil(seconds * 60);
+  
+  if (input.time.type === "number"){
+    if (input.units === "frames") {
+      frames = input.frames.value;
+    } else {
+        const seconds = input.time.value;
+        frames = Math.ceil(seconds * 60);
+    };
+  }else {
+
+    // if (input.units === "frames") {
+    //     // const timeVar = variableFromUnion(input.time.value, temporaryEntityVariable(0));
+    //     frames = input.frames.value;
+    // } else {
+    //     // timeVar = variableFromUnion(input.time.value, temporaryEntityVariable(0));             !!!!!!!!!!! WORK HERE !!!!!!!!!!!
+    //     const seconds = input.time.value;
+    //     frames = Math.ceil(seconds * 60);
+    // };
   }
-  if (frames > 0) {
-    wait(frames);
-  }
+
+    if (frames > 0) {
+      wait(frames); 
+    }
+  
 };
 
 module.exports = {
